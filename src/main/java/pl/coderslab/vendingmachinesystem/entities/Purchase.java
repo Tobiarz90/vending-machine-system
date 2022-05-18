@@ -72,4 +72,16 @@ public class Purchase {
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "id=" + id +
+                ", stockItem=" + stockItem +
+                ", dateTime=" + dateTime +
+                ", price=" + price +
+                ", amount=" + amount +
+                ", paymentMethod=" + paymentMethod +
+                '}';
+    }
 }
