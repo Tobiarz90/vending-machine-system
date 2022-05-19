@@ -32,4 +32,10 @@ public class UserPanelController {
 
         return "machine";
     }
+
+    @GetMapping(path = "/keypad")
+    public String showKeypad() {
+        return "keypad";
+    }
+
 }
