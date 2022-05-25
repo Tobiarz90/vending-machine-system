@@ -25,6 +25,8 @@ public class Purchase {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    private OrderStatus status;
+
     public Long getId() {
         return id;
     }
@@ -73,6 +75,14 @@ public class Purchase {
         this.paymentMethod = paymentMethod;
     }
 
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Purchase{" +
@@ -82,6 +92,7 @@ public class Purchase {
                 ", price=" + price +
                 ", amount=" + amount +
                 ", paymentMethod=" + paymentMethod +
+                ", status=" + status +
                 '}';
     }
 }
