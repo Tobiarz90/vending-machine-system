@@ -3,14 +3,21 @@ package pl.coderslab.vendingmachinesystem.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import pl.coderslab.vendingmachinesystem.Machine;
+import pl.coderslab.vendingmachinesystem.entities.OrderStatus;
+import pl.coderslab.vendingmachinesystem.entities.Purchase;
 import pl.coderslab.vendingmachinesystem.entities.StockItem;
+import pl.coderslab.vendingmachinesystem.repositories.PurchaseRepository;
 import pl.coderslab.vendingmachinesystem.repositories.StockItemRepository;
 import pl.coderslab.vendingmachinesystem.services.StockItemService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "/user")
@@ -20,9 +27,12 @@ public class UserPanelController {
 
     private final StockItemService stockItemService;
 
-    public UserPanelController(StockItemRepository stockItemRepository, StockItemService stockItemService) {
+    private final PurchaseRepository purchaseRepository;
+
+    public UserPanelController(StockItemRepository stockItemRepository, StockItemService stockItemService, PurchaseRepository purchaseRepository) {
         this.stockItemRepository = stockItemRepository;
         this.stockItemService = stockItemService;
+        this.purchaseRepository = purchaseRepository;
     }
 
     @GetMapping(path = "/machine")
@@ -43,4 +53,24 @@ public class UserPanelController {
         return "keypad";
     }
 
+    @PostMapping(path = "/keypad")
+    public String keypadSelect(@RequestParam Integer itemNumber, Model model) {
+        Optional<StockItem> stockItem = stockItemService.findItemWithNumber(itemNumber);
+        if (stockItem.isPresent()) {
+            Purchase purchase = new Purchase();
+            purchase.setStockItem(stockItem.get());
+            purchase.setAmount(1);
+            purchase.setStatus(OrderStatus.IN_PROGRESS);
+
+            BigDecimal price = stockItem.get().getProduct().getPrice();
+            model.addAttribute("price", price);
+
+            Purchase savedPurchase = purchaseRepository.save(purchase);
+            model.addAttribute("purchaseId", savedPurchase.getId());
+
+            return "redirect:/payment";
+        }
+
+        return "redirect:/keypad";
+    }
 }
