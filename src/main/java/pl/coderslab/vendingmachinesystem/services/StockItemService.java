@@ -7,6 +7,7 @@ import pl.coderslab.vendingmachinesystem.repositories.StockItemRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +25,7 @@ public class StockItemService {
                         Collectors.groupingBy(StockItem::getNoVertically)));
     }
 
-    public StockItem findItemWithNumber(Integer itemNumber) {
+    public Optional<StockItem> findItemWithNumber(Integer itemNumber) {
         List<StockItem> stockItems = stockItemRepository.findAll();
         Map<Integer, Map<Integer, List<StockItem>>> stock = getStock(stockItems);
 
@@ -32,13 +33,17 @@ public class StockItemService {
         for (int i = 0; i < Machine.ROWS; i++) {
             for (int j = 0; j < Machine.COLUMNS; j++) {
                 counter++;
-                if (counter == itemNumber) {
-                    return stock.get(i).get(j).get(0);
+                if (stock.get(i) != null) {
+                    if (stock.get(i).get(j) != null) {
+                        if (counter == itemNumber) {
+                            return Optional.of(stock.get(i).get(j).get(0));
+                        }
+                    }
                 }
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
 }
