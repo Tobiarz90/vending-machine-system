@@ -20,5 +20,7 @@
 
     <input type="submit">
 </form>
+
+<a href="<c:url value="/user/machine"/>">Go to Machine View</a>
 </body>
 </html>
