@@ -68,10 +68,10 @@ public class UserPanelController {
             Purchase savedPurchase = purchaseRepository.save(purchase);
             model.addAttribute("purchaseId", savedPurchase.getId());
 
-            return "redirect:/payment";
+            return "redirect:payment";
         }
 
-        return "redirect:/keypad";
+        return "redirect:keypad";
     }
 
     @GetMapping(path = "/payment")
