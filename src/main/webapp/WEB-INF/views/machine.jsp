@@ -34,5 +34,7 @@
         </tr>
     </c:forEach>
 </table>
+
+<a href="<c:url value="/user/keypad"/>">Go to Keypad View</a>
 </body>
 </html>
