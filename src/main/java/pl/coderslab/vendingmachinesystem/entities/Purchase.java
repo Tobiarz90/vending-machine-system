@@ -25,6 +25,7 @@ public class Purchase {
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     public Long getId() {
