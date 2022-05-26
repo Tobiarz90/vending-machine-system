@@ -73,4 +73,10 @@ public class UserPanelController {
 
         return "redirect:/keypad";
     }
+
+    @GetMapping(path = "/payment")
+    public String showPayment() {
+        return "payment";
+    }
+
 }
