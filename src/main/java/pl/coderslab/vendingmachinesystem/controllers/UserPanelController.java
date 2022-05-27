@@ -2,25 +2,26 @@ package pl.coderslab.vendingmachinesystem.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import pl.coderslab.vendingmachinesystem.Machine;
 import pl.coderslab.vendingmachinesystem.entities.OrderStatus;
+import pl.coderslab.vendingmachinesystem.entities.PaymentMethod;
 import pl.coderslab.vendingmachinesystem.entities.Purchase;
 import pl.coderslab.vendingmachinesystem.entities.StockItem;
 import pl.coderslab.vendingmachinesystem.repositories.PurchaseRepository;
 import pl.coderslab.vendingmachinesystem.repositories.StockItemRepository;
 import pl.coderslab.vendingmachinesystem.services.StockItemService;
 
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "/user")
+@SessionAttributes({"price", "purchaseId"})
 public class UserPanelController {
 
     private final StockItemRepository stockItemRepository;
@@ -79,4 +80,35 @@ public class UserPanelController {
         return "payment";
     }
 
+    @PostMapping(path = "/payment")
+    public String processPayment(@RequestParam(defaultValue = "0") BigDecimal amount, HttpSession session, Model model) {
+        Long purchaseId = (Long) session.getAttribute("purchaseId");
+        BigDecimal price = (BigDecimal) session.getAttribute("price");
+
+        if (price.compareTo(amount) <= 0) {
+            if (purchaseId != null) {
+                Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+
+                if (optionalPurchase.isPresent()) {
+                    Purchase purchase = optionalPurchase.get();
+
+                    purchase.setPaymentMethod(PaymentMethod.COINS);
+                    purchase.setDateTime(LocalDateTime.now());
+                    purchase.setPrice(price);
+                    purchase.setStatus(OrderStatus.FINALIZED);
+
+                    StockItem stockItem = purchase.getStockItem();
+                    stockItem.setQuantity(stockItem.getQuantity() > 0 ? stockItem.getQuantity() - 1 : 0);
+                    stockItemRepository.save(stockItem);
+
+                    Purchase savedPurchase = purchaseRepository.save(purchase);
+                    model.addAttribute("purchase", savedPurchase);
+
+                    return "paymentConfirmation";
+                }
+            }
+        }
+
+        return "redirect:payment";
+    }
 }
