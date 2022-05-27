@@ -1,6 +1,8 @@
 package pl.coderslab.vendingmachinesystem.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,6 +20,8 @@ public class Purchase {
 
     private LocalDateTime dateTime;
 
+    @DecimalMin(value = "0.0", inclusive = false)
+    @Digits(integer = 4, fraction = 2)
     private BigDecimal price;
 
     private Integer amount;
