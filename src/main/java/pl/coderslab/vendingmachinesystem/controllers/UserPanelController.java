@@ -27,10 +27,13 @@ public class UserPanelController {
 
     private final PurchaseRepository purchaseRepository;
 
-    public UserPanelController(StockItemRepository stockItemRepository, StockItemService stockItemService, PurchaseRepository purchaseRepository) {
+    private final Validator validator;
+
+    public UserPanelController(StockItemRepository stockItemRepository, StockItemService stockItemService, PurchaseRepository purchaseRepository, AdminService adminService, Validator validator) {
         this.stockItemRepository = stockItemRepository;
         this.stockItemService = stockItemService;
         this.purchaseRepository = purchaseRepository;
+        this.validator = validator;
     }
 
     @GetMapping(path = "/machine")
@@ -89,15 +92,25 @@ public class UserPanelController {
                 purchase.setPrice(price);
                 purchase.setStatus(OrderStatus.FINALIZED);
 
-                StockItem stockItem = purchase.getStockItem();
-                stockItem.setQuantity(stockItem.getQuantity() > 0 ? stockItem.getQuantity() - 1 : 0);
-                stockItemRepository.save(stockItem);
+                Set<ConstraintViolation<Purchase>> violations = validator.validate(purchase);
+                if (!violations.isEmpty()) {
+                    List<String> errorMessages = violations.stream()
+                            .map(ConstraintViolation::getMessage)
+                            .collect(Collectors.toList());
+                    model.addAttribute("errors", errorMessages);
+                } else {
+                    StockItem stockItem = purchase.getStockItem();
+                    stockItem.setQuantity(stockItem.getQuantity() > 0 ? stockItem.getQuantity() - 1 : 0);
+                    stockItemRepository.save(stockItem);
 
-                Purchase savedPurchase = purchaseRepository.save(purchase);
-                model.addAttribute("purchase", savedPurchase);
+                    Purchase savedPurchase = purchaseRepository.save(purchase);
+                    model.addAttribute("purchase", savedPurchase);
 
-                return "paymentConfirmation";
+                    return "paymentConfirmation";
+                }
             }
+        } else {
+            return "redirect:keypad";
         }
 
         return "redirect:payment";
