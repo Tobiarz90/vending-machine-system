@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: barti
@@ -20,6 +19,11 @@
 </c:if>
 
 <form action="<c:url value="/user/payment"/>" method="post">
+    <c:if test="${not empty price}">
+        <span>Price: ${price} PLN</span>
+        <br>
+    </c:if>
+
     <label>
         Enter coins:
         <input name="amount" type="number" min="0.01" step="0.01">
