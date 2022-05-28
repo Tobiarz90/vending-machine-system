@@ -11,6 +11,37 @@
     <title>Payment Confirmation View</title>
 </head>
 <body>
-<h1>${purchase.toString()}</h1>
+<div>
+    <h2>Transaction ended</h2>
+
+    <label>
+        Date of purchase:
+        <input disabled value="${purchase.dateTime.format(formatter)}">
+    </label>
+    <br>
+
+    <label>
+        Product name:
+        <input disabled value="${purchase.stockItem.product.name}">
+    </label>
+    <br>
+
+    <label>
+        Amount:
+        <input disabled value="${purchase.price}">
+    </label>
+    <br>
+
+    <label>
+        Order status:
+        <input disabled value="${purchase.status}">
+    </label>
+    <br>
+
+    <label>
+        Payment method:
+        <input disabled value="${purchase.paymentMethod}">
+    </label>
+</div>
 </body>
 </html>

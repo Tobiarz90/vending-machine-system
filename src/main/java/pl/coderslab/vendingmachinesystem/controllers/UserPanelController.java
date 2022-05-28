@@ -12,6 +12,7 @@ import pl.coderslab.vendingmachinesystem.services.StockItemService;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -106,6 +107,7 @@ public class UserPanelController {
                     Purchase savedPurchase = purchaseRepository.save(purchase);
                     model.addAttribute("purchase", savedPurchase);
 
+                    model.addAttribute("formatter", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
                     return "paymentConfirmation";
                 }
             }
