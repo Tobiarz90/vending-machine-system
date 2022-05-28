@@ -10,12 +10,16 @@ import pl.coderslab.vendingmachinesystem.repositories.StockItemRepository;
 import pl.coderslab.vendingmachinesystem.services.StockItemService;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path = "/user")
@@ -47,12 +51,12 @@ public class UserPanelController {
         model.addAttribute("rows", Machine.ROWS);
         model.addAttribute("columns", Machine.COLUMNS);
 
-        return "machine";
+        return "user/machine";
     }
 
     @GetMapping(path = "/keypad")
     public String showKeypad() {
-        return "keypad";
+        return "user/keypad";
     }
 
     @PostMapping(path = "/keypad")
@@ -78,7 +82,7 @@ public class UserPanelController {
 
     @GetMapping(path = "/payment")
     public String showPayment() {
-        return "payment";
+        return "user/payment";
     }
 
     @PostMapping(path = "/payment")
@@ -108,7 +112,7 @@ public class UserPanelController {
                     model.addAttribute("purchase", savedPurchase);
 
                     model.addAttribute("formatter", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
-                    return "paymentConfirmation";
+                    return "user/paymentConfirmation";
                 }
             }
         } else {
