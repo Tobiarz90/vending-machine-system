@@ -16,6 +16,7 @@ public class VendingMachineSystemApplication implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
         registry.addViewController("/403").setViewName("403");
+        registry.addViewController("/admin/home").setViewName("admin/home");
     }
 
 }
